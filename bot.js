@@ -12,12 +12,25 @@ const token = process.env.BOT_TOKEN;
 // Create a bot instance
 const bot = new TelegramBot(token, { polling: true });
 
-const client = new MongoClient(uri);
+// Global MongoDB client connection
+let client;
+let clientPromise;
+
+// Ensure MongoDB connection is reused
+if (!client) {
+    client = new MongoClient(uri);
+    clientPromise = client.connect();
+}
 
 async function getDatabase() {
-    await client.connect();
-    const db = client.db('telegramapp');
-    return db.collection('users');
+    try {
+        await clientPromise; // Ensure the client is connected
+        const db = client.db('telegramapp');
+        return db.collection('users');
+    } catch (error) {
+        console.error('Database connection error:', error);
+        throw new Error('Failed to connect to the database');
+    }
 }
 
 // Store user states (temporary memory)
@@ -65,7 +78,7 @@ bot.on('message', async (msg) => {
                 await collection.insertOne({ name: state.name, email: state.email });
                 bot.sendMessage(chatId, `Thank you, ${state.name}! Your information has been saved.`);
             } catch (error) {
-                console.error(error);
+                console.error('Error saving user information:', error);
                 bot.sendMessage(chatId, 'An error occurred while saving your information.');
             }
 
@@ -75,6 +88,7 @@ bot.on('message', async (msg) => {
     }
 });
 
+// Start the Express server
 app.listen(4000, 'localhost', () => {
     console.log('Bot is Running');
 });
