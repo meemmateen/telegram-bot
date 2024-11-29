@@ -12,9 +12,6 @@
         "dest": "index.js"
       }
     ],
-    "env": {
-      "API_URI": "@api_uri",
-      "BOT_TOKEN": "@bot_token"
-    }
+   
   }
   
