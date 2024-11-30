@@ -5,7 +5,7 @@ import { MongoClient } from 'mongodb';
 import TelegramBot from 'node-telegram-bot-api';
 
 const app = express();
-
+const port = process.env.PORT || 4000;
 const uri = process.env.API_URI;
 const token = process.env.BOT_TOKEN;
 
@@ -89,6 +89,6 @@ bot.on('message', async (msg) => {
 });
 
 // Start the Express server
-app.listen(4000, 'localhost', () => {
-    console.log('Bot is Running');
+app.listen(port, 'localhost', () => {
+    console.log( `Bot is Running on ${port}`);
 });
