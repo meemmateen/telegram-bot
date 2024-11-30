@@ -89,6 +89,6 @@ bot.on('message', async (msg) => {
 });
 
 // Start the Express server
-app.listen(port, 'localhost', () => {
+app.listen(port, '0.0.0.0', () => {
     console.log( `Bot is Running on ${port}`);
 });
